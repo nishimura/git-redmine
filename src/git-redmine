@@ -4,12 +4,11 @@
 import urllib2
 import json
 from subprocess import *
-from optparse import OptionParser, OptionValueError
+from optparse import OptionParser
 import tempfile
 import os
 from urlparse import urlparse
 import httplib
-import urllib
 
 api_key = Popen(["git", "config", "redmine.apiKey"], stdout=PIPE).communicate()[0].strip()
 if not api_key:
