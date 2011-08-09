@@ -4,12 +4,11 @@
 import urllib2
 import json
 from subprocess import *
-from optparse import OptionParser, OptionValueError
+from optparse import OptionParser
 import tempfile
 import os
 from urlparse import urlparse
 import httplib
-import urllib
 
 api_key = Popen(["git", "config", "redmine.apiKey"], stdout=PIPE).communicate()[0].strip()
 if not api_key:
@@ -82,15 +81,15 @@ if args:
         quit(retcode)
 
     if args[0].isdigit():
-        issue = get_issue(int(args[0]))
-        print "%s : #%d" % ("ID".rjust(16), issue["issue"]["id"])
-        print "%s : %s" % ("Priority".rjust(16), issue["issue"]["priority"]["name"])
-        print "%s : %s" % ("Tracker".rjust(16), issue["issue"]["tracker"]["name"])
-        print "%s : %d%%" % ("Done Ratio".rjust(16), issue["issue"]["done_ratio"])
-        print "%s : %s" % ("Assigned To".rjust(16), issue["issue"]["assigned_to"]["name"])
-        print "%s : %s" % ("Subject".rjust(16), issue["issue"]["subject"])
+        issue = get_issue(int(args[0]))['issue']
+        print "%s : #%d" % ("ID".rjust(16), issue["id"])
+        print "%s : %s" % ("Priority".rjust(16), issue["priority"]["name"])
+        print "%s : %s" % ("Tracker".rjust(16), issue["tracker"]["name"])
+        print "%s : %d%%" % ("Done Ratio".rjust(16), issue["done_ratio"])
+        print "%s : %s" % ("Assigned To".rjust(16), issue["assigned_to"]["name"] if issue.get("assigned_to") else "")
+        print "%s : %s" % ("Subject".rjust(16), issue["subject"])
         print "------"
-        print issue["issue"]["description"]
+        print issue["description"]
         quit(0)
 
 f = urllib2.urlopen('%s/issues.json?limit=100&key=%s' % (project_url, api_key))
