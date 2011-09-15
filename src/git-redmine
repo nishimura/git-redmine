@@ -27,6 +27,8 @@ parser = OptionParser(usage)
 parser.add_option("--done-ratio", dest="done_ratio", type="int",
                   help="Update done ratio of the issue", metavar="RATIO")
 parser.add_option("--status", dest="status", type="int", help="Update status of the issue", metavar="STATUS_ID")
+parser.add_option("--versions", dest="versions", action="store_true", default=False, help="View issue list with versions.")
+parser.add_option("--due", dest="due", action="store_true", default=False, help="View issue list with due date.")
 parser.add_option("--version", dest="version", type="int", help="View issue list of specific version id", metavar="VERSION_ID")
 (options, args) = parser.parse_args()
 
@@ -104,6 +106,10 @@ j = json.loads(data)
 issues = j["issues"]
 issues.sort(cmp=lambda x,y: cmp(y["priority"]["id"], x["priority"]["id"]))
 for issue in issues:
+    if options.versions:
+        print "%s %s" % (issue["fixed_version"]["id"], issue["fixed_version"]["name"]),
+    if options.due:
+        print "%s" % (issue["due_date"] if issue.get("due_date") else "          "),
     print "%3d%% %s %s [%s] %s" % (issue["done_ratio"], issue["priority"]["id"], ('#%d' % issue["id"]).ljust(5), issue["status"]["name"], issue["subject"])
 
 quit(0)
