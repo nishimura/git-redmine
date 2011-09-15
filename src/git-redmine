@@ -27,6 +27,7 @@ parser = OptionParser(usage)
 parser.add_option("--done-ratio", dest="done_ratio", type="int",
                   help="Update done ratio of the issue", metavar="RATIO")
 parser.add_option("--status", dest="status", type="int", help="Update status of the issue", metavar="STATUS_ID")
+parser.add_option("--version", dest="version", type="int", help="View issue list of specific version id", metavar="VERSION_ID")
 (options, args) = parser.parse_args()
 
 u = urlparse(project_url)
@@ -92,7 +93,12 @@ if args:
         print issue["description"]
         quit(0)
 
-f = urllib2.urlopen('%s/issues.json?limit=100&key=%s' % (project_url, api_key))
+
+url = '%s/issues.json?limit=100&key=%s' % (project_url, api_key)
+if options.version:
+    url += "&fixed_version_id=%s" % options.version
+
+f = urllib2.urlopen(url)
 data = f.read()
 j = json.loads(data)
 issues = j["issues"]
